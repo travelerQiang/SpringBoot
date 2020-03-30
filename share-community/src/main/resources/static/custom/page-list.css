@@ -1,0 +1,10 @@
+@import "../bootstrap-4.4.1-dist/css/bootstrap.css";
+ul[class='list-inline'] li{
+    background: white;
+    text-align: center;
+    font-weight: bold;
+    display: inline-block;
+    width: 60px;
+    height: 40px;
+    line-height: 40px;
+}

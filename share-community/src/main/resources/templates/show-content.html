@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/4.4.1-1/css/bootstrap.css}">
+    <script th:src="@{/webjars/jquery/3.4.0/jquery.min.js}"></script>
+    <script th:src="@{/webjars/popper.js/1.14.3/popper.js}"></script>
+    <script th:src="@{/webjars/bootstrap/4.4.1-1/js/bootstrap.js}"></script>
+    <style>
+        .component{
+            background: white;
+            padding: 20px;
+        }
+        .comment-item{
+            height: 70px;
+            width: 100%;
+            margin: 10px 0px;
+        }
+        .user-head{
+            width: 30px;
+            height: 30px;
+            margin-right: 10px;
+            float: left;
+        }
+        .comment-content{
+            height: 60px;
+            width: 90%;
+            text-align: left;
+            background: gainsboro;
+            float: left;
+        }
+        .incline-down{
+            width: 15px;
+            height: 9px;
+            background-image: url(/img/down-arrow.png);
+        }
+        #comment-area{
+            margin: 10px 0px;
+            padding: 20px;
+        }
+        .more-span{
+            color: dodgerblue;
+        }
+        #comment-input{
+            height: 70px;
+        }
+
+        #form-submit{
+            text-align: right;
+            display: block;
+        }
+        #content-footer{
+            display: flex;
+            flex-direction: row;
+        }
+        #like{
+            width: 80px;
+            height: 30px;
+            background: #f5f6f7;
+        }
+        #like:hover{
+            background: #f9ecec;
+        }
+        a:hover {
+            text-decoration: none;
+        }
+
+    </style>
+</head>
+<body style="padding-top: 57px" background="/img/bg.png">
+<!--引入导航栏-->
+<nav th:replace="~{commons/bar :: #navbar}"></nav>
+
+<div class="container mt-5" >
+    <div class="shadow-lg rounded component">
+    <h2 th:text="${com.title}" id="title"></h2>
+    <span class="small"><i th:text="${com.userId}">用户一</i>&nbsp;&nbsp;发表于</span>
+    <span class="small" th:text="${#dates.format(com.createdDate,'yyyy-MM-dd')}">2020/02/02</span>
+    <hr>
+        <!--内容展示区-->
+        <div id="textarea">
+        </div>
+            <div id="content-footer">
+                <a href="">
+                <div id="like">
+                    <img src="/img/like.png" style="height: 30px;width: 30px" alt="">
+                    <small>点赞</small>
+                    <small th:text="${com.likeCount}"></small>
+                </div>
+                </a>
+            </div>
+    </div>
+    <div id="comment-area" class="component shadow-lg rounded">
+        <div id="comment-input">
+            <img th:src="@{/user/head/default.jpg}" class="rounded-circle img-fluid user-head" alt="">
+            <form class="form-group" action="/comment/save" method="post" id="comment-form">
+                <textarea name="content" id="content"  cols="130" rows="2" placeholder="说点什么吧" class="form-control"></textarea>
+            </form>
+            <div id="form-submit">
+                <button  onclick="insertComment()" class="btn btn-primary" >发表评论</button>
+            </div>
+        </div>
+        <hr>
+        <div id="comment-body">
+            <h3>评论区</h3>
+            <!--<div class="comment-item">-->
+                <!--<img th:src="@{/user/head/default.jpg}" class="user-head rounded-circle"  alt="">-->
+                <!--<div class="comment-content rounded shadow-sm">-->
+                    <!--<p>内容内容内容内容内容内容内容内容内容内容内容内容</p>-->
+                <!--</div>-->
+            <!--</div>-->
+        </div>
+        <div class="text-center">
+            <a href="javascript:getMoreComments()" class="more-span">加载更多
+            </a>
+        </div>
+    </div>
+
+</div>
+
+</body>
+
+<!--加载内容文件的html代码-->
+<script th:inline="javascript" type="text/javascript">
+    window.onload = function () {
+        var content = [[${com.content}]] + "";
+        $("#textarea").html(content);
+        getComments(0);
+        console.log([[${com.id}]])
+    }
+    function show_submit() {
+        $("#form-submit").css("display","block")
+    }
+    function hide_submit() {
+        $("#form-submit").css("display","none")
+    }
+    function appendComment(headUrl,comContent){
+        var comment_body = document.getElementById("comment-body");
+        var com_item = getCommentBody(headUrl,comContent);
+        comment_body.appendChild(com_item);
+    }
+    function getComments(pageNum) {
+        $.ajax({
+            url:"/comment/article/"+[[${com.id}]],
+            data:{"pageNum":pageNum},
+            success:function (data) {
+                for (var c in data.content){
+                    appendComment(data.content[c].userHead,data.content[c].content);
+                }
+            }
+        })
+    }
+    function getCommentBody(headUrl,comContent) {
+        var com_div = document.createElement("div");
+        com_div.classList.add("comment-item");
+        var user_head = document.createElement("img");
+        user_head.src = headUrl;
+        user_head.classList.add("user-head");
+        user_head.classList.add("rounded-circle");
+        var content = document.createElement("div");
+        content.classList.add("comment-content");
+        content.classList.add("shadow-sm");
+        content.classList.add("rounded");
+        var content_p = document.createElement("p");
+        content_p.innerHTML=comContent;
+        content.appendChild(content_p);
+        com_div.appendChild(user_head);
+        com_div.appendChild(content);
+        return com_div;
+    }
+    // function refreshComment() {
+    //     var comment_body = document.getElementById("comment-body");
+    //     $(".comment-body").children(".comment-item").remove();
+    //     getComments(0);
+    // }
+    function insertComment() {
+        var content=$("#content").val();
+        $("#content").val("");
+        $.post({
+            url:"/comment/save",
+            data:{"targetId":[[${com.id}]],"type":0,"content":content},
+            success:function (data) {
+               var com_item = getCommentBody(data.userHead,data.content);
+               insertAfter(com_item,$("#comment-body h3")[0])
+            }
+        })
+    }
+    function insertAfter(newItem,target) {
+        var parent = target.parentNode;
+        if (parent.lastChild==target){
+            parent.appendChild(newItem);
+        }
+        else{
+            parent.insertBefore(newItem,target.nextSibling);
+        }
+    }
+    var num=0;
+    function getMoreComments() {
+        num+=1;
+        getComments(num);
+    }
+</script>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="asserts/css/bootstrap.min.css" th:href="@{/webjars/bootstrap/4.4.1-1/css/bootstrap.css}" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <table class="table table-striped">
+        <thead>
+        <th>id</th>
+        <th>title</th>
+        <th>content_url</th>
+        <th>brief</th>
+        <th>user_id</th>
+        <th>comment_count</th>
+        <th>like_count</th>
+        <th>created_date</th>
+        <th>size</th>
+        <th>type</th>
+        </thead>
+        <tbody>
+        <tr th:each="com : ${coms}">
+            <td th:text="${com.id}"></td>
+            <td th:text="${com.title}"></td>
+            <td th:text="${com.content}"></td>
+            <td th:text="${com.brief}"></td>
+            <td th:text="${com.userId}"></td>
+            <td th:text="${com.commentCount}"></td>
+            <td th:text="${com.likeCount}"></td>
+            <td th:text="${#dates.format(com.createdDate,'yyyy-MM-dd')}"></td>
+            <td th:text="${com.cSize}"></td>
+            <td th:text="${com.cType}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+<script type="text/javascript" th:src="@{/webjars/bootstrap/4.4.1-1/js/bootstrap.js}"></script>
+<script type="text/javascript" th:src="@{/webjars/jquery/3.4.0/jquery.js}"></script>
+<!-- Icons -->
+<script type="text/javascript" src="asserts/js/feather.min.js"></script>
+</html>

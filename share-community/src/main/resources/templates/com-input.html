@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/4.4.1-1/css/bootstrap.css}">
+    <link rel="stylesheet" th:href="@{/editormd/css/editormd.css}">
+    <script th:src="@{/webjars/jquery/3.4.0/jquery.min.js}"></script>
+    <script th:src="@{/webjars/popper.js/1.14.3/popper.js}"></script>
+    <script th:src="@{/webjars/bootstrap/4.4.1-1/js/bootstrap.js}"></script>
+</head>
+<body style="padding-top: 57px" background="/img/bg.png">
+<!--导航栏-->
+<nav th:replace="~{commons/bar ::#navbar }"></nav>
+<div class="container mt-5 mb-5 shadow-lg rounded p-3" style="width: 70%; background: #f5f5f5">
+    <form class="form-group" method="post" action="/com/save">
+        <div class="form-group">
+            <label for="title"><b>标题</b></label>
+            <input type="text" class="form-control" name="title" id="title">
+        </div>
+        <div class="form-group">
+            <label for="brief"><b>简介</b></label>
+            <input type="text" class="form-control" name="brief" id="brief">
+        </div>
+        <div class="form-group">
+            <label><b>内容</b></label>
+            <div class="editormd" id="test-editormd">
+                <textarea class="editormd-markdown-textarea" name="test-editormd-markdown-doc"></textarea>
+                <!-- 第二个隐藏文本域，用来构造生成的HTML代码，方便表单POST提交，这里的name可以任意取，后台接受时以这个name键为准 -->
+                <textarea class="editormd-html-textarea" name="text"></textarea>
+            </div>
+        </div>
+        <div class="text-right">
+            <input type="submit" value="提交" class="btn btn-primary mr-0">
+        </div>
+    </form>
+</div>
+</body>
+<script th:src="@{/jquery-3.2.1.min.js}"></script>
+<script th:src="@{/editormd/editormd.js}"></script>
+<script type="text/javascript" th:inline="javascript">
+    $(function() {
+        editormd("test-editormd", {
+            width   : "100%",
+            height  : 640,
+            syncScrolling : "single",
+            //你的lib目录的路径，我这边用JSP做测试的static.editormd.lib
+            path    : [[@{/editormd/lib/}]],
+        //这个配置在simple.html中并没有，但是为了能够提交表单，使用这个配置可以让构造出来的HTML代码直接在第二个隐藏的textarea域中，方便post提交表单。
+        saveHTMLToTextarea : false
+    });
+    });
+</script>
+</html>

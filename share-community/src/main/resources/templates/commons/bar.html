@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<nav class="navbar navbar-light bg-light nav-tabs navbar-expand-md fixed-top" id="navbar">
+    <div class="container">
+        <a href="#" class="navbar-brand">
+            <img src="/img/logo.jpg" width="40" height="30" class="d-inline-block align-top">
+            鱼社
+        </a>
+        <button class="navbar-toggler" data-toggle="collapse" data-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active">首页</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">热门</a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link">推荐</a>
+                </li>
+                <li class="dropdown nav-item">
+                    <a href="" class="nav-item nav-link dropdown-toggle" data-toggle="dropdown">下拉菜单</a>
+                    <div class="dropdown-menu">
+                        <a href="#" class="dropdown-item">aaa</a>
+                        <a href="#" class="dropdown-item">bbb</a>
+                        <a href="#" class="dropdown-item">ccc</a>
+                    </div>
+                </li>
+            </ul>
+            <form action="" class="form-inline">
+                <input type="text" class="form-control" placeholder="请输入关键字">
+                <button class="btn btn-primary">搜索</button>
+            </form>
+            <div class="dropdown nav-item" th:if="${not #strings.isEmpty(session.username)}">
+                <a href="" class="nav-item nav-link dropdown-toggle" data-toggle="dropdown">
+                    <img th:src="${(session.userHead==null || #strings.isEmpty(session.userHead))?'/user/head/default.jpg':#strings.toString(session.userHead)}" alt="我的中心" class="rounded-circle img-fluid" width="40" height="30">
+                </a>
+                <div class="dropdown-menu">
+                    <a th:href="@{/user/profile/}+${session.userId}" class="dropdown-item">我的主页</a>
+                    <a th:href="@{/user/exit}" class="dropdown-item">退出</a>
+                </div>
+            </div>
+            <a th:if="${#strings.isEmpty(session.username)}" id="modal-111021" href="#modal-container-111021" role="button" class="btn" data-toggle="modal">登录</a>
+        </div>
+    </div>
+</nav>
+</body>
+</html>

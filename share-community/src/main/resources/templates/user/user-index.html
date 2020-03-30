@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>我的首页</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/4.4.1-1/css/bootstrap.css}">
+    <link rel="stylesheet" href="/custom/user-index.css">
+    <link rel="stylesheet" href="/custom/page-list.css">
+    <script th:src="@{/webjars/jquery/3.4.0/jquery.min.js}"></script>
+    <script th:src="@{/webjars/popper.js/1.14.3/popper.js}"></script>
+    <script th:src="@{/webjars/bootstrap/4.4.1-1/js/bootstrap.js}"></script>
+</head>
+<body style="padding-top: 57px" background="/img/bg.png">
+<nav th:replace="~{commons/bar :: #navbar}"></nav>
+<div class="container mt-5 mb-5">
+    <div class="rounded info_head">
+        <a href="#upload-modal" data-toggle="modal">
+            <img th:src="${(session.userHead==null || #strings.isEmpty(session.userHead))?'/user/head/default.jpg':#strings.toString(session.userHead)}" class="rounded-circle" alt="" style="width: 100px;height: 100px">
+        </a>
+        <p th:text="${session.username}"></p>
+    </div>
+    <div class="row mt-5">
+        <div class="col-md-4">
+            <div class="rounded shadow-lg mr-2 p-2" style="background: white">
+
+                <h3>基本信息</h3>
+                <ul class="list-unstyled">
+                    <li class="divider"><label>性别：<span th:text="${user.sex}==0?'女':'男'"></span></label></li>
+                    <li class="divider"><label>注册时间：<span th:text="${#dates.format(user.createdDate,'yyyy-MM-dd')}"></span></label></li>
+                    <li class="divider"><label>上次登录时间：<span th:text="${#dates.format(user.lastLogin,'yyyy-MM-dd')}"></span></label></li>
+                    <li class="divider"><label>电话：<span th:text="${#strings.isEmpty(user.mobile)==true?'未填写':user.mobile}"></span></label></li>
+                    <li class="divider"><label>Email：<span th:text="${#strings.isEmpty(user.email)==true?'未填写':user.email}"></span></label></li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="rounded shadow-lg w-auto p-2"style="background: white;">
+                <h3>我的创作</h3>
+                <table class="table-striped table-hover" style="width: 100%">
+                    <thead>
+                    <th>标题</th>
+                    <th>创作时间</th>
+                    <th>操作</th>
+                    </thead>
+
+                    <tr th:each="com : ${coms}" style="height: 50px">
+                        <td th:text="${com.title}"></td>
+                        <td th:text="${#dates.format(com.createdDate,'yyyy-MM-dd')}"></td>
+                        <td>
+                            <a th:href="@{/com/article/}+${com.id}" class="btn btn-sm btn-success">预览</a>
+                            <a href="" class="btn btn-sm btn-warning">编辑</a>
+                            <a th:href="@{/com/article/delete/}+${com.id}" class="btn btn-sm btn-danger">删除</a>
+                        </td>
+                    </tr>
+                </table>
+                <div class="text-center mt-3">
+                <ul class="list-inline">
+                    <li class="shadow-sm"><a th:href="@{(pageNum=1)}">首页</a></li>
+                    <li class="shadow-sm" th:each="count : ${#numbers.sequence(1,coms.getTotalPages())}">
+                        <a th:href="@{(pageNum=${count})}" th:text="${count}"></a>
+                    </li>
+                    <li class="shadow-sm"><a th:href="@{(pageNum=${coms.getTotalPages()})}">尾页</a></li>
+                </ul>
+                </div>
+                <a class="btn btn-primary text-white font-weight-bold" th:href="@{/com/edit}">新增</a>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+<div class="modal fade" id="upload-modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>上传头像</h3>
+                <button class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="body">
+                <form action="/user/upload/head" id="head-upload" enctype="multipart/form-data" method="post" class="form-group">
+                    <input type="file" class="form-control" name="image">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="$('#head-upload').submit()">确定</button>
+                <button class="btn btn-secondary" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+
+</script>
+</html>
