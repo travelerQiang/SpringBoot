@@ -13,3 +13,6 @@ spring:
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     show-sql: true
+  servlet:
+    multipart:
+      max-file-size: 10MB     #前端页面提交单个文件最大长度

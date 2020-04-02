@@ -103,9 +103,9 @@ public class UserController {
     @PostMapping("/upload/head")
     public String upload(@RequestParam("image") MultipartFile file, HttpServletRequest request){
         int userId = Integer.parseInt(request.getSession().getAttribute("userId").toString());
-        String[] split = file.getOriginalFilename().split(".");
-        String filename = userId+split[1];      //图片后缀名不变
-        File target = new File(System.getProperty("user.dir")+"\\src\\main\\resources\\public\\user\\head\\"+filename);
+        String originalFilename = file.getOriginalFilename();
+        String filename = userId+originalFilename.substring(originalFilename.lastIndexOf("."));      //图片后缀名不变
+        File target = new File("D:/workspace/upload/user/head/"+filename);
             try {
                 if (!target.exists()){
                     target.createNewFile();
@@ -115,7 +115,7 @@ public class UserController {
                 outputStream.flush();
                 outputStream.close();
                 User user = userService.findById(userId);
-                user.setHeadUrl("/user/head/"+filename);
+                user.setHeadUrl("/upload/user/head/"+filename);
                 userService.update(user);
                 request.getSession().setAttribute("userHead",user.getHeadUrl());
             } catch (IOException e) {

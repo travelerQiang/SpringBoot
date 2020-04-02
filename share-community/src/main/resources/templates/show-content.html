@@ -71,6 +71,7 @@
 <body style="padding-top: 57px" background="/img/bg.png">
 <!--引入导航栏-->
 <nav th:replace="~{commons/bar :: #navbar}"></nav>
+<div th:replace="~{index :: #modal-container}"></div>
 
 <div class="container mt-5" >
     <div class="shadow-lg rounded component">
@@ -199,6 +200,24 @@
     function getMoreComments() {
         num+=1;
         getComments(num);
+    }
+    function user_ajax() {
+        $.post({
+            url:"/user/check",
+            data:{"username":$("#username").val(),"password":$("#password").val()},
+            success: function (data) {
+                if (data.toString()=='ok'){
+                    $("#msg-p").css('display','none');
+                    alert("登录成功");
+                    setTimeout(location.reload(),1000);
+                }
+                else {
+                    console.log(data);
+                    $("#msg-p").html(data);
+                    $("#msg-p").css('display','block');
+                }
+            }
+        })
     }
 </script>
 </html>
