@@ -38,6 +38,12 @@ public class UserController {
         return "index";
     }
 
+    /**
+     * 添加Post请求的额User对象
+     * @param user  前端传来的user对象
+     * @param request
+     * @return
+     */
     @PostMapping("/add")
     public String addUser(User user, HttpServletRequest request){
         User save = userService.addUser(user);
@@ -52,7 +58,7 @@ public class UserController {
      * @param model
      * @param user
      * @param request
-     * @return 返回并刷新首页视图
+     * @return 返回正确或错误信息，以json的格式，不经过视图的映射
      */
     @PostMapping("/check")
     @ResponseBody
@@ -100,6 +106,12 @@ public class UserController {
         return "redirect:/";
     }
 
+    /**
+     * 接收用户传来的图片文件，保存在D:/workspace/upload/user/head目录下并在User中添加信息
+     * @param file 用户传来的图片文件
+     * @param request
+     * @return 重定向到用户主页视图
+     */
     @PostMapping("/upload/head")
     public String upload(@RequestParam("image") MultipartFile file, HttpServletRequest request){
         int userId = Integer.parseInt(request.getSession().getAttribute("userId").toString());

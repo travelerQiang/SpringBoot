@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface CompositionRepositry extends JpaRepository<Composition,Integer> {
-    public List<Composition> findByUserId(int userId);
+    public Page<Composition> findByUserId(int userId,Pageable pageable);
 
     @Override
     public Page<Composition> findAll(Pageable pageable);

@@ -6,6 +6,8 @@ import com.lzq.sharecommunity.service.CompositonService;
 import com.lzq.sharecommunity.service.UserService;
 import org.hibernate.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -46,6 +48,12 @@ public class CompositionController {
         return "redirect:/user/profile/"+request.getSession().getAttribute("userId");
     }
 
+    /**
+     * 根据作品id查找作品
+     * @param id Composition的id
+     * @param model
+     * @return
+     */
     @GetMapping("/article/{id}")
     public String dispaly(@PathVariable("id") int id, Model model){
         Composition c = compositonService.getById(id);
@@ -54,11 +62,25 @@ public class CompositionController {
         model.addAttribute("user",userService.findById(c.getUserId()));
         return "show-content";
     }
+
+    /**
+     * 根据Compostiton的id删除数据库中的Composition
+     * @param id
+     * @param request
+     * @return
+     */
     @GetMapping("/article/delete/{id}")
     public String delete(@PathVariable("id") int id, HttpServletRequest request){
         compositonService.deleteCom(id);
         return "forward:/user/profile/"+request.getSession().getAttribute("userId");
     }
+
+    /**
+     * 根据Compositon的id查找所有的Comment
+     * @param id
+     * @param comment
+     * @return
+     */
     @RequestMapping("/comment/{id}")
     public String addComment(@PathVariable("id") int id, @RequestParam("comment") String comment){
 
@@ -112,6 +134,11 @@ public class CompositionController {
                 return 1;
         }
         return 0;
-
+    }
+    @ResponseBody
+    @PostMapping("/byUser/{id}")
+    public Page<Composition> getByUserId(@PathVariable(name = "id")int uId,@RequestParam(name = "pageNum")int pageNum){
+        Page<Composition> byUserId = compositonService.getByUserId(pageNum, uId);
+        return byUserId;
     }
 }

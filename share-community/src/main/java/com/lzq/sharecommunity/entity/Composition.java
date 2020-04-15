@@ -40,6 +40,21 @@ public class Composition {
     @Column(name = "c_type")
     private int cType;
 
+    @Column(name = "first_picture")
+    private String firstPicture;
+
+    public void setLikeCount(int likeCount) {
+        this.likeCount = likeCount;
+    }
+
+    public String getFirstPicture() {
+        return firstPicture;
+    }
+
+    public void setFirstPicture(String firstPicture) {
+        this.firstPicture = firstPicture;
+    }
+
     public int getId() {
         return id;
     }

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -23,8 +24,12 @@ public class CompositionServiceImpl implements CompositonService {
     }
 
     @Override
-    public List<Composition> getByUserId(int userId) {
-        return repositry.findByUserId(userId);
+    public Page<Composition> getByUserId(int pageNum,int userId) {
+        //按时间排序
+        int pageSize = 3;
+        Sort s = Sort.by(Sort.Direction.DESC,"createdDate");
+        Pageable pageable = PageRequest.of(pageNum,pageSize,s);
+        return repositry.findByUserId(userId,pageable);
     }
 
     @Override
@@ -38,6 +43,12 @@ public class CompositionServiceImpl implements CompositonService {
             composition.setCreatedDate(new Date());
             composition.setLike_count(0);
             composition.setCommentCount(0);
+            String content = composition.getContent();
+            int index = content.indexOf("![](");
+            if (index!=-1){                             //判断有没有图片插入，markdown图片格式为![](xxx.jpg),并且找的是第一张图片
+                index+=4;                               //获取路径起始位置
+                composition.setFirstPicture(composition.getContent().substring(index,content.indexOf(")")));
+            }
             repositry.save(composition);
             return true;
         }

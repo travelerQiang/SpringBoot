@@ -8,7 +8,7 @@ import java.util.List;
 public interface CompositonService {
     public List<Composition> getAll();
 
-    public List<Composition> getByUserId(int userId);
+    public Page<Composition> getByUserId(int pageNum,int userId);
 
     public Composition getById(int id);
 

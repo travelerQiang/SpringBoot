@@ -65,6 +65,9 @@
         a:hover {
             text-decoration: none;
         }
+        img{
+            max-width: 100%;
+        }
 
     </style>
 </head>
@@ -148,6 +151,8 @@
             success:function (data) {
                 for (var c in data.content){
                     appendComment(data.content[c].userHead,data.content[c].content);
+                    console.log(c);
+                    console.log(data);
                 }
             }
         })

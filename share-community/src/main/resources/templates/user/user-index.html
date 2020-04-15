@@ -9,13 +9,15 @@
     <script th:src="@{/webjars/jquery/3.4.0/jquery.min.js}"></script>
     <script th:src="@{/webjars/popper.js/1.14.3/popper.js}"></script>
     <script th:src="@{/webjars/bootstrap/4.4.1-1/js/bootstrap.js}"></script>
+    <script src="/custom/page-list.js"></script>
 </head>
 <body style="padding-top: 57px" background="/img/bg.png">
 <nav th:replace="~{commons/bar :: #navbar}"></nav>
 <div class="container mt-5 mb-5">
     <div class="rounded info_head">
         <a href="#upload-modal" data-toggle="modal">
-            <img th:src="${(session.userHead==null || #strings.isEmpty(session.userHead))?'/user/head/default.jpg':#strings.toString(session.userHead)}" class="rounded-circle" alt="" style="width: 100px;height: 100px">
+            <img th:src="${(session.userHead==null || #strings.isEmpty(session.userHead))?'/user/head/default.jpg':#strings.toString(session.userHead)}"
+                 class="rounded-circle" alt="" style="width: 100px;height: 100px">
         </a>
         <p th:text="${session.username}"></p>
     </div>
@@ -26,45 +28,51 @@
                 <h3>基本信息</h3>
                 <ul class="list-unstyled">
                     <li class="divider"><label>性别：<span th:text="${user.sex}==0?'女':'男'"></span></label></li>
-                    <li class="divider"><label>注册时间：<span th:text="${#dates.format(user.createdDate,'yyyy-MM-dd')}"></span></label></li>
-                    <li class="divider"><label>上次登录时间：<span th:text="${#dates.format(user.lastLogin,'yyyy-MM-dd')}"></span></label></li>
-                    <li class="divider"><label>电话：<span th:text="${#strings.isEmpty(user.mobile)==true?'未填写':user.mobile}"></span></label></li>
-                    <li class="divider"><label>Email：<span th:text="${#strings.isEmpty(user.email)==true?'未填写':user.email}"></span></label></li>
+                    <li class="divider"><label>注册时间：<span
+                            th:text="${#dates.format(user.createdDate,'yyyy-MM-dd')}"></span></label></li>
+                    <li class="divider"><label>上次登录时间：<span
+                            th:text="${#dates.format(user.lastLogin,'yyyy-MM-dd')}"></span></label></li>
+                    <li class="divider"><label>电话：<span
+                            th:text="${#strings.isEmpty(user.mobile)==true?'未填写':user.mobile}"></span></label></li>
+                    <li class="divider"><label>Email：<span
+                            th:text="${#strings.isEmpty(user.email)==true?'未填写':user.email}"></span></label></li>
                 </ul>
             </div>
         </div>
         <div class="col-md-8">
-            <div class="rounded shadow-lg w-auto p-2"style="background: white;">
+            <div class="rounded shadow-lg w-auto p-2" style="background: white;">
                 <h3>我的创作</h3>
-                <table class="table-striped table-hover" style="width: 100%">
+                <table class="table table-striped table-hover" style="width: 100%">
                     <thead>
                     <th>标题</th>
                     <th>创作时间</th>
                     <th>操作</th>
                     </thead>
-
-                    <tr th:each="com : ${coms}" style="height: 50px">
-                        <td th:text="${com.title}"></td>
-                        <td th:text="${#dates.format(com.createdDate,'yyyy-MM-dd')}"></td>
-                        <td>
-                            <a th:href="@{/com/article/}+${com.id}" class="btn btn-sm btn-success">预览</a>
-                            <a href="" class="btn btn-sm btn-warning">编辑</a>
-                            <a th:href="@{/com/article/delete/}+${com.id}" class="btn btn-sm btn-danger">删除</a>
-                        </td>
-                    </tr>
+                    <tbody id="com-table">
+                    </tbody>
+                    <!--<tr th:each="com : ${coms}" style="height: 50px">-->
+                    <!--<td th:text="${com.title}"></td>-->
+                    <!--<td th:text="${#dates.format(com.createdDate,'yyyy-MM-dd')}"></td>-->
+                    <!--<td>-->
+                    <!--<a th:href="@{/com/article/}+${com.id}" class="btn btn-sm btn-success">预览</a>-->
+                    <!--<a href="" class="btn btn-sm btn-warning">编辑</a>-->
+                    <!--<a th:href="@{/com/article/delete/}+${com.id}" class="btn btn-sm btn-danger">删除</a>-->
+                    <!--</td>-->
+                    <!--</tr>-->
                 </table>
-                <div class="text-center mt-3">
-                <ul class="list-inline">
-                    <li class="shadow-sm"><a th:href="@{(pageNum=1)}">首页</a></li>
-                    <li class="shadow-sm" th:each="count : ${#numbers.sequence(1,coms.getTotalPages())}">
-                        <a th:href="@{(pageNum=${count})}" th:text="${count}"></a>
-                    </li>
-                    <li class="shadow-sm"><a th:href="@{(pageNum=${coms.getTotalPages()})}">尾页</a></li>
-                </ul>
+                <!--分页组件-->
+                <div class="text-right">
+                    <ul>
+                        <li  class="nav-link" style="display: inline-block">
+                            <button class="btn btn-link" id="pre" onclick="getPre()">上一页</button>
+                        </li>
+                        <li  class="nav-link" style="display: inline-block">
+                            <button class="btn btn-link" id="next" onclick="getNext()">下一页</button>
+                        </li>
+                    </ul>
                 </div>
                 <a class="btn btn-primary text-white font-weight-bold" th:href="@{/com/edit}">新增</a>
             </div>
-
         </div>
 
     </div>
@@ -77,7 +85,8 @@
                 <button class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="body">
-                <form action="/user/upload/head" id="head-upload" enctype="multipart/form-data" method="post" class="form-group">
+                <form action="/user/upload/head" id="head-upload" enctype="multipart/form-data" method="post"
+                      class="form-group">
                     <input type="file" class="form-control" name="image">
                 </form>
             </div>
@@ -90,6 +99,77 @@
 </div>
 </body>
 <script>
+    //当前页号
+    var pageNum = 0;
+    //总页号
+    var totalNum = 0;
+    window.onload = function () {
+        getComsByPageNum(0);
+    }
+    function getComsByPageNum(pageNum) {
+        $.post({
+            url: "/com/byUser/" + [[${session.userId}]],
+            data: {
+                "pageNum": pageNum
+            },
+            success: function (data) {
+                for (var i in data.content) {
+                    var tr = document.createElement("tr");
+                    fixTableLine(tr, data.content[i]);
+                    $("#com-table").append(tr);
+                }
+                totalNum = data.totalPages;
+                judgeOutOfRange();
+            }
+        })
+    }
 
+    function fixTableLine(tr, composition) {
+        var title = document.createElement("td");
+        var time = document.createElement("td");
+        var op = document.createElement("td");
+        $(title).html(composition.title);
+        $(time).html(composition.createdDate.substring(0, 10));
+        var preview = document.createElement("button");
+        var edit = document.createElement("button");
+        var delete_ = document.createElement("button");
+        preview.className = "btn btn-sm btn-success";
+        preview.innerHTML = "预览";
+        edit.className = "btn btn-sm btn-warning";
+        edit.innerHTML = "编辑";
+        delete_.className = "btn btn-sm btn-danger";
+        delete_.innerHTML = "删除";
+        op.appendChild(preview);
+        op.appendChild(edit);
+        op.appendChild(delete_);
+        tr.appendChild(title);
+        tr.appendChild(time);
+        tr.appendChild(op);
+    }
+    function getPre() {
+        pageNum--;
+        $("#com-table").empty();
+        getComsByPageNum(pageNum);
+    }
+
+    function getNext() {
+        pageNum++;
+        $("#com-table").empty();
+        getComsByPageNum(pageNum);
+    }
+
+    function judgeOutOfRange() {
+        if ((pageNum + 1) >= totalNum) {
+            $("#next").addClass("disabled");
+        }
+        else if (pageNum == 0) {
+            $("#pre").addClass("disabled");
+        }
+        else {
+            $("#pre").removeClass("disabled");
+            $("#next").removeClass("disabled");
+        }
+
+    }
 </script>
 </html>

@@ -1,5 +1,4 @@
-@import "../bootstrap-4.4.1-dist/css/bootstrap.css";
-ul[class='list-inline'] li{
+.page-list{
     background: white;
     text-align: center;
     font-weight: bold;
@@ -7,4 +6,11 @@ ul[class='list-inline'] li{
     width: 60px;
     height: 40px;
     line-height: 40px;
+}
+.page-list-active{
+    background: gainsboro;
+}
+.page-list-link{
+    line-height: normal;
+    height: 30px;
 }
